@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽獎活動</title>
+    <style>
+        body {
+            background-image: url('/Users/pochun/Desktop/html/S__69624002.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #lotteryButton {
+            cursor: pointer;
+            max-width: 100%;
+            transition: transform 1s ease-in-out;
+        }
+
+        #prizeImage {
+            max-width: 100%;
+            transition: transform 1s ease-in-out;
+            display: none; /* 初始隱藏抽獎結果圖片 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 插入你的自定義圖片 -->
+    <!-- 使用自定義的圖片作為抽獎按鈕 -->
+    <img id="lotteryButton" src="/Users/pochun/Desktop/html/S__69624000.png" alt="抽獎按鈕" onclick="submitEntry()">
+
+    <div id="result">
+        <!-- 用於顯示抽獎結果的圖片 -->
+        <img id="prizeImage" src="path/to/your/prize.jpg" alt="抽獎結果">
+    </div>
+
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script>
+        // 開始時的旋轉角度
+        let rotationDegree = 0;
+        // 旋轉方向（1表示往右，-1表示往左）
+        let rotationDirection = 1;
+
+        // 開始自動旋轉
+        const rotationInterval = setInterval(() => {
+            rotationDegree += rotationDirection * 10; // 調整旋轉速度
+            document.getElementById('lotteryButton').style.transform = `rotate(${rotationDegree}deg)`;
+
+            // 到達30度後改變旋轉方向
+            if (Math.abs(rotationDegree) >= 70) {
+                rotationDirection *= -1;
+            }
+        }, 100); // 調整旋轉頻率
+
+        function submitEntry() {
+            // 停止自動旋轉
+            clearInterval(rotationInterval);
+
+            // 隱藏抽獎按鈕
+            document.getElementById('lotteryButton').style.display = 'none';
+
+            // 生成抽獎結果數字（範例中為1到50的隨機數）
+            lotteryResult = Math.floor(Math.random() * 50) + 1;
+
+            // 顯示抽獎結果
+            document.getElementById('result').innerText = `抽獎結果：${lotteryResult}`;
+            document.getElementById('result').style.display = 'block';
+
+            // 顯示檢視按鈕
+            document.getElementById('viewButton').style.display = 'block';
+        }
+
+        function viewResult() { // 在這裡，你應該使用Line API將抽獎結果數字傳送到Line訊息
+            // 以下僅為示例，實際應用中需要使用Line Messaging API
+            // 參考Line Messaging API文檔：https://developers.line.biz/en/docs/messaging-api/
+            const message = `抽獎結果：${lotteryResult}`;
+            liff.init({ liffId: 'YOUR_LIFF_ID' }).then(() => {
+                liff.sendMessages([
+                    {
+                        type: 'text',
+                        text: message
+                    }
+                ]).then(() => {
+                    liff.closeWindow();
+                });
+            });
+        }
+    </script>
+</body>
+</html>
